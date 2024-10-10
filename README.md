@@ -1,7 +1,7 @@
 # GarbageCollectionTodoistTasks
 
-> Parses a 'Abfallkalender' `.ics` file, and turns the garbage collection dates
-> into Todoist tasks
+> CLI tool that parses a 'Abfallkalender' `.ics` file, and turns the garbage
+> collection dates into Todoist tasks
 
 <img src="assets/example.png" width="500" alt="example">
 
