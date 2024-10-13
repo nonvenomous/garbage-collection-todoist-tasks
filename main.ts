@@ -1,5 +1,6 @@
 import { TodoistApi } from "npm:@doist/todoist-api-typescript";
 import ical from "npm:node-ical";
+// @deno-types="npm:@types/prompts"
 import prompt from "npm:prompts";
 import process from "node:process";
 import chalk from "npm:chalk";

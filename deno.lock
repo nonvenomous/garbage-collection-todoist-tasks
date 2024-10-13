@@ -2,20 +2,12 @@
   "version": "4",
   "specifiers": {
     "jsr:@std/assert@^1.0.6": "1.0.6",
-    "jsr:@std/cli@*": "1.0.6",
-    "jsr:@std/cli@^1.0.6": "1.0.6",
     "jsr:@std/dotenv@~0.225.2": "0.225.2",
     "jsr:@std/internal@^1.0.4": "1.0.4",
     "npm:@doist/todoist-api-typescript@*": "3.0.3_type-fest@4.26.1_axios@1.7.7",
-    "npm:@doist/todoist-api-typescript@^3.0.3": "3.0.3_type-fest@4.26.1_axios@1.7.7",
-    "npm:@types/node@*": "22.5.4",
-    "npm:@types/prompts@^2.4.9": "2.4.9",
     "npm:chalk@*": "5.3.0",
-    "npm:chalk@^5.3.0": "5.3.0",
     "npm:node-ical@*": "0.19.0",
-    "npm:node-ical@0.19": "0.19.0",
-    "npm:prompts@*": "2.4.2",
-    "npm:prompts@^2.4.2": "2.4.2"
+    "npm:prompts@*": "2.4.2"
   },
   "jsr": {
     "@std/assert@1.0.6": {
@@ -23,9 +15,6 @@
       "dependencies": [
         "jsr:@std/internal"
       ]
-    },
-    "@std/cli@1.0.6": {
-      "integrity": "d22d8b38c66c666d7ad1f2a66c5b122da1704f985d3c47f01129f05abb6c5d3d"
     },
     "@std/dotenv@0.225.2": {
       "integrity": "e2025dce4de6c7bca21dece8baddd4262b09d5187217e231b033e088e0c4dd23"
@@ -51,19 +40,6 @@
         "ts-custom-error",
         "type-fest",
         "uuid@9.0.1"
-      ]
-    },
-    "@types/node@22.5.4": {
-      "integrity": "sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==",
-      "dependencies": [
-        "undici-types"
-      ]
-    },
-    "@types/prompts@2.4.9": {
-      "integrity": "sha512-qTxFi6Buiu8+50/+3DGIWLHM6QuWsEKugJnnP6iv2Mc4ncxE4A/OJkjuVOA+5X0X1S/nq5VJRa8Lu+nwcvbrKA==",
-      "dependencies": [
-        "@types/node",
-        "kleur"
       ]
     },
     "asynckit@0.4.0": {
@@ -240,9 +216,6 @@
     "type-fest@4.26.1": {
       "integrity": "sha512-yOGpmOAL7CkKe/91I5O3gPICmJNLJ1G4zFYVAsRHg7M64biSnPtRj0WNQt++bRkjYOqjWXrhnUw1utzmVErAdg=="
     },
-    "undici-types@6.19.8": {
-      "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
-    },
     "upper-case-first@2.0.2": {
       "integrity": "sha512-514ppYHBaKwfJRK/pNC6c/OxfGa0obSnAl106u97Ed0I625Nin96KAjttZF6ZL3e1XLtphxnqrOi9iWgm+u+bg==",
       "dependencies": [
@@ -262,7 +235,6 @@
       "jsr:@std/cli@^1.0.6",
       "jsr:@std/dotenv@~0.225.2",
       "npm:@doist/todoist-api-typescript@^3.0.3",
-      "npm:@types/prompts@^2.4.9",
       "npm:chalk@^5.3.0",
       "npm:node-ical@0.19",
       "npm:prompts@^2.4.2"
