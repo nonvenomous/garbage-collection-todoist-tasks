@@ -5,7 +5,10 @@ import prompt from "npm:prompts";
 import process from "node:process";
 import chalk from "npm:chalk";
 import { assert } from "@std/assert";
+import * as csv from "@std/csv";
+import { formatISO, parse } from "npm:date-fns";
 import "@std/dotenv/load";
+import { subDays } from "date-fns/subDays";
 
 const CONSTS = {
   DRY_RUN: false,
@@ -18,71 +21,66 @@ const CONSTS = {
 } as const;
 
 const BINS = {
-  "Bio-Tonne": "#955b2c",
-  "Restmüll-Tonne": "#323232",
-  "Altpapier-Tonne": "#0091d4",
-  "Wertstoff-Tonne": "#c7be01",
+  "Bio": "#955b2c",
+  "Restmüll": "#323232",
+  "Papier": "#0091d4",
+  "Gelbe Tonne": "#c7be01",
 } as const;
 
 type TodoistProject = { name: string; id: string };
 type BinName = keyof typeof BINS;
+type PickUpEvent = { bin: BinName; dueString: string };
 
 const isInFuture = (dateString: string) => new Date(dateString) >= new Date();
-const parseIcs = (filePath: string): {
-  bin: BinName;
-  dueString: string;
-}[] => {
-  const allEvents = ical.sync.parseFile(filePath);
-  console.log(`File: ${filePath} parsed.`);
+function isValidDate(d: Date): d is Date {
+  return !isNaN(d.getTime());
+}
 
-  console.log("Listing future relevant garbage pick up events");
-  const relevantEvents: { bin: BinName; dueString: string }[] = [];
+const parseCsv = (path: string): PickUpEvent[] => {
+  const decoder = new TextDecoder("iso-8859-1");
+  const data = Deno.readFileSync(path);
+  const lines = csv.parse(decoder.decode(data), {
+    separator: ";",
+    skipFirstRow: true,
+  });
 
-  for (const key of Object.keys(allEvents)) {
-    const event = allEvents[key];
+  const skippedBins = new Set();
 
-    if (event.type !== "VEVENT") {
-      console.log(chalk.gray("non garbage event, type:", event?.type));
-      continue;
-    }
-
-    const eventHasExpectedStructure = typeof event.summary === "object" &&
-      ("val" in event.summary);
-    assert(eventHasExpectedStructure, "Event has unexpected structure");
-
-    // @ts-expect-error asserted summary is object not string
-    const eventTitle = event.summary?.val;
+  const relevantEvents: PickUpEvent[] = [];
+  for (const l of lines) {
     assert(
-      typeof eventTitle === "string",
-      `event.summary.val not string: '${eventTitle}'`,
+      "Datum" in l && "Abfallart" in l,
+      `csv line has not expected keys ${Object.keys(l)}`,
     );
-
-    const isoDate = event.start.toISOString().split("T")[0];
-    const binName = eventTitle.split(" ")[0];
+    const pickupDate = parse(l.Datum, "dd.MM.yyyy", new Date());
+    assert(
+      isValidDate(pickupDate),
+      `date string: ${l.Datum} didnt resolve into valid date ${pickupDate}`,
+    );
+    const remindDate = subDays(pickupDate, 1);
+    const dueString = formatISO(remindDate, { representation: "date" });
+    const binName = l.Abfallart;
 
     if (!(binName in BINS)) {
-      console.log(chalk.gray(`irrelevant bin ${binName}`));
+      skippedBins.add(binName);
       continue;
     }
 
     const binColor = BINS[binName as BinName];
 
-    // Due timezones, "isoDate" is the day before the bin is actually collected
-    const isRelevantEvent = isInFuture(isoDate) && binColor;
+    console.log(chalk.hex(binColor).bold(binName), dueString);
+    const isRelevantEvent = isInFuture(dueString) && binColor;
 
     if (!isRelevantEvent) {
-      console.log(chalk.gray("irrelevant bin"));
-      continue; // Skip irrelevant events
+      console.log(chalk.gray("irrelevant past bin", dueString));
+      continue;
     }
-
-    console.log(chalk.hex(binColor).bold(binName), isoDate);
-
     relevantEvents.push({
+      dueString,
       bin: (binName as BinName),
-      dueString: isoDate,
     });
   }
-
+  console.log(chalk.gray(`Skipped bin types: ${[...skippedBins].join(" & ")}`));
   return relevantEvents;
 };
 
@@ -173,7 +171,7 @@ async function main() {
     process.exit(1);
   }
 
-  const relevantEvents = parseIcs(icsFilePath);
+  const relevantEvents = parseCsv(icsFilePath);
   const todoistApi = new TodoistApi(TODOIST_API_KEY);
 
   if (relevantEvents.length < 1) {
@@ -192,7 +190,7 @@ async function main() {
     process.exit(0);
   }
 
-  const testEvent = { bin: "Bio-Tonne", dueString: "today" } as const;
+  const testEvent = { bin: "Bio", dueString: "today" } as const;
   const eventsToCreate = CONSTS.DRY_RUN ? [testEvent] : relevantEvents;
 
   const eventsToCreateByDate = eventsToCreate.reduce((acc, event) => {

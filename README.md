@@ -1,6 +1,6 @@
 # GarbageCollectionTodoistTasks
 
-> CLI tool that parses a 'Abfallkalender' `.ics` file, and turns the garbage
+> CLI tool that parses a 'Abfallkalender' `.csv` file, and turns the garbage
 > collection dates into Todoist tasks
 
 <img src="assets/example.png" width="500" alt="example">
@@ -9,11 +9,11 @@
 
     # set `TODOIST_API_KEY` env var or create `.env`
 
-    deno task dev [ICS_FILE_PATH]
-    deno task run [ICS_FILE_PATH]
+    deno task dev [CSV_FILE_PATH]
+    deno task run [CSV_FILE_PATH]
 
     # example
-    deno task dev 2024.ics
+    deno task dev 2024.CSV
 
 ## Development
 
@@ -23,9 +23,10 @@
 
 ### Calendar File
 
-A `.ics` file is required that only includes events of garbage collection days
+A `.CSV` file is required that only includes events of garbage collection days
 such as provided here
-[Abfall- und Müllkalender](https://www.raunheim.de/kalender/de/stadtverwaltung/-/2/calendar_show).
+[Abfall- und Müllkalender](https://www.raunheim.de/kalender/de/stadtverwaltung/-/2/calendar_show)
+or [HERE](https://portal.staedteservice.de/calendar/)
 
 ## References
 
